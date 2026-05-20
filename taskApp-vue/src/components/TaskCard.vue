@@ -1,21 +1,28 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import TaskEdit from "@/components/TaskEdit.vue"
+import TaskModalWrapper from '@/components/TaskModalWrapper.vue'
 
 interface Task {
   id: string
   title: string
+  description: string
   dueDate?: string
+  priority: string
   isCompleted: boolean
 }
 
 const props = defineProps<{ task: Task }>()
 
 const isEditOpen = ref(false)
-const taskToEdit = ref({ ...props.task })
+const taskToEdit = ref({
+  title: props.task.title,
+  dueDate: props.task.dueDate || '',
+  description: props.task.description,
+  priority: props.task.priority,
+})
 
-const handleSave = async () => {
-  console.log('saved')
+const handleUpdateSubmit = async () => {
+  console.log('updated task')
 }
 </script>
 
@@ -33,6 +40,7 @@ const handleSave = async () => {
         {{ task.title }}
       </h3>
       <p v-if="task.dueDate" class="text-xs text-gray-600 mt-1">📅 {{ task.dueDate }}</p>
+      <p v-if="task.priority" class="text-xs text-gray-600 mt-1">Priority: {{ task.priority }}</p>
     </div>
 
     <div class="flex justify-end mt-4 gap-2">
@@ -47,17 +55,20 @@ const handleSave = async () => {
         {{ task.isCompleted ? 'Completed' : 'Mark Done' }}
       </button>
       <button
-        @click="isEditOpen=true"
+        @click="isEditOpen = true"
         class="text-xs px-2 py-1.5 rounded-lg border border-gray-400 transition-colors hover:bg-gray-100 pi pi-file-edit"
       ></button>
       <button
         class="text-xs px-2 py-1.5 rounded-lg border transition-colors text-red-400 hover:bg-red-100 pi pi-trash"
       ></button>
-      <TaskEdit 
-      v-if="isEditOpen" 
-      :task="props.task" 
-      @close="isEditOpen = false"
-    />
     </div>
   </div>
+  <TaskModalWrapper
+    v-if="isEditOpen"
+    title="Edit Task Details"
+    submit-label="Save Changes"
+    :initial-values="taskToEdit"
+    @submit="handleUpdateSubmit"
+    @close="isEditOpen = false"
+  />
 </template>

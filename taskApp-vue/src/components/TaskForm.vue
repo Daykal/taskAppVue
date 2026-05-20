@@ -7,8 +7,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'submit', data: { title: string; dueDate?: string }): void,
-  (e: 'cancel'): void
+(e: 'submit', data: { title: string; dueDate?: string; description: string; priority: string }): void
+(e: 'close'): void
 }>()
 
 const formData = ref({
@@ -18,7 +18,7 @@ const formData = ref({
   priority: props.initialValues?.priority || 'medium',
 })
 
-const todayStr = new Date().toISOString().split('T')[0];
+const todayStr = new Date().toISOString().split('T')[0]
 </script>
 
 <template>
@@ -34,7 +34,7 @@ const todayStr = new Date().toISOString().split('T')[0];
         />
       </div>
       <div>
-        <label class="block text-xs  mb-1">Task Description</label>
+        <label class="block text-xs mb-1">Task Description</label>
         <textarea
           v-model="formData.description"
           type="text"
@@ -44,30 +44,34 @@ const todayStr = new Date().toISOString().split('T')[0];
         />
       </div>
 
-      <div>
-        <label class="block text-xs mb-1">Due Date</label>
-        <input
-          v-model="formData.dueDate"
-          type="date"
-          :min="todayStr"
-          class="w-full border p-2 rounded-lg text-sm"
-        />
-      </div>
-      <div>
-        <label class="block text-xs font-medium mb-1">Priority</label>
-        <select
-          v-model="formData.priority"
-          class="w-full border p-2.5 bg-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="low">Low Priority</option>
-          <option value="medium">Medium Priority</option>
-          <option value="high">High Priority</option>
-        </select>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Due Date</label>
+          <input
+            v-model="formData.dueDate"
+            type="date"
+            :min="todayStr"
+            class="w-full border p-2 rounded-lg text-sm bg-white"
+          />
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Priority</label>
+          <select
+            v-model="formData.priority"
+            class="w-full border p-2.5 bg-white rounded-lg text-sm"
+          >
+            <option value="low">Low Priority</option>
+            <option value="medium">Medium Priority</option>
+            <option value="high">High Priority</option>
+          </select>
+        </div>
       </div>
       <div class="flex justify-end gap-2 mt-6">
         <button
-          @click="emit('cancel')"
-          class="text-xs px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
+          type="button"
+          @click="emit('close')"
+          class="text-xs px-3 py-2 rounded-lg border border-gray-300 hover:bg-red-500 transition-colors"
         >
           Cancel
         </button>
@@ -76,7 +80,7 @@ const todayStr = new Date().toISOString().split('T')[0];
           type="submit"
           class="text-xs px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
         >
-          Save
+          {{ submitLabel }}
         </button>
       </div>
     </div>
