@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+import TaskEdit from "@/components/TaskEdit.vue"
+
 interface Task {
   id: string
   title: string
@@ -6,7 +9,14 @@ interface Task {
   isCompleted: boolean
 }
 
-defineProps<{ task: Task }>()
+const props = defineProps<{ task: Task }>()
+
+const isEditOpen = ref(false)
+const taskToEdit = ref({ ...props.task })
+
+const handleSave = async () => {
+  console.log('saved')
+}
 </script>
 
 <template>
@@ -37,11 +47,17 @@ defineProps<{ task: Task }>()
         {{ task.isCompleted ? 'Completed' : 'Mark Done' }}
       </button>
       <button
+        @click="isEditOpen=true"
         class="text-xs px-2 py-1.5 rounded-lg border border-gray-400 transition-colors hover:bg-gray-100 pi pi-file-edit"
       ></button>
       <button
         class="text-xs px-2 py-1.5 rounded-lg border transition-colors text-red-400 hover:bg-red-100 pi pi-trash"
       ></button>
+      <TaskEdit 
+      v-if="isEditOpen" 
+      :task="props.task" 
+      @close="isEditOpen = false"
+    />
     </div>
   </div>
 </template>
