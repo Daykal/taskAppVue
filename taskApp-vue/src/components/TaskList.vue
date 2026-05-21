@@ -4,7 +4,9 @@ import TaskCard from './TaskCard.vue'
 interface Task {
   id: string
   title: string
+  description: string
   dueDate?: string
+  priority: string
   isCompleted: boolean
 }
 
