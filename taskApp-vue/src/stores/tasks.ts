@@ -26,7 +26,7 @@ export const useTasksStore = defineStore('tasks', () => {
     isLoading.value = true
     error.value = null
     try {
-      const response = await apiClient.get<Task[]>('/')
+      const response = await apiClient.get<Task[]>('')
       tasks.value = response.data
     } catch (err: any) {
       error.value = err.message || 'Failed to fetch tasks'
@@ -38,7 +38,7 @@ export const useTasksStore = defineStore('tasks', () => {
 
   async function addTask(title: string, description: string, priority: string, dueDate: string) {
     try {
-      const response = await apiClient.post<Task>('/', {
+      const response = await apiClient.post<Task>('', {
         title,
         description,
         priority,

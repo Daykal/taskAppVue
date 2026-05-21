@@ -1,46 +1,39 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { computed } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 import TaskList from '@/components/TaskList.vue'
 import TaskModalWrapper from '@/components/TaskModalWrapper.vue'
+import { useTasksStore } from '@/stores/tasks'
 
-const myTaskStats = ref({
-  all: 13,
-  today: 3,
-  scheduled: 1,
-  completed: 8,
-})
-const taskList = ref([
-  {
-    id: 'task-1',
-    title: 'Finish Vue Dashboard Layout',
-    dueDate: 'Today',
-    isCompleted: false,
-  },
-  {
-    id: 'task-2',
-    title: 'Review Pull Requests',
-    dueDate: 'Tomorrow',
-    isCompleted: true,
-  },
-  {
-    id: 'task-3',
-    title: 'Gym Session (Leg Day)',
-    dueDate: 'May 22, 2026',
-    priority: 'Medium',
-    isCompleted: false,
-  },
-  {
-    id: 'task-4',
-    title: 'Buy Groceries & Meal Prep',
-    dueDate: 'May 24, 2026',
-    isCompleted: false,
-  },
-])
+const tasksStore = useTasksStore()
+
+const myTaskStats = computed(() => ({
+  all: tasksStore.totalTasksCount,
+  today: tasksStore.tasks.filter((t) => t.dueDate === 'Today').length,
+  scheduled: tasksStore.tasks.filter((t) => t.dueDate && t.dueDate !== 'Today').length,
+  completed: tasksStore.completedTasks.length,
+}))
 
 const isFormOpen = ref(false)
-const handleSubmitForm = async () => {
-  console.log('form submitted')
+const handleSubmitForm = async (formData: {
+  title: string
+  description: string
+  priority: string
+  dueDate: string
+}) => {
+  try {
+    await tasksStore.addTask(
+      formData.title || '',
+      formData.description || '',
+      formData.priority || 'Medium',
+      formData.dueDate || '',
+    )
+    console.log('Form submitted and store updated!')
+    isFormOpen.value = false
+  } catch (err) {
+    console.error('Failed to submit form:', err)
+  }
 }
 </script>
 
@@ -57,7 +50,7 @@ const handleSubmitForm = async () => {
 
     <Sidebar class="hidden md:block" :stats="myTaskStats"></Sidebar>
     <main class="w-full bg-gray-200 border-rose-300 rounded-xl">
-      <TaskList :tasks="taskList"></TaskList>
+      <TaskList :tasks="tasksStore.tasks"></TaskList>
     </main>
     <div class="hidden md:block fixed bottom-16 right-16 z-40">
       <button

@@ -61,9 +61,9 @@ const todayStr = new Date().toISOString().split('T')[0]
             v-model="formData.priority"
             class="w-full border p-2.5 bg-white rounded-lg text-sm"
           >
-            <option value="low">Low Priority</option>
-            <option value="medium">Medium Priority</option>
-            <option value="high">High Priority</option>
+            <option value="LOW">Low Priority</option>
+            <option value="MEDIUM">Medium Priority</option>
+            <option value="HIGH">High Priority</option>
           </select>
         </div>
       </div>

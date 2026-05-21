@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const apiClient = axios.create({
-  baseURL: 'http://localhost:3001', // Your base API URL
+  baseURL: 'http://localhost:3001/api/v1/tasks',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
