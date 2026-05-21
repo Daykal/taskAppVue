@@ -7,7 +7,7 @@ interface Task {
   description: string
   dueDate?: string
   priority: string
-  isCompleted: boolean
+  status: string
 }
 
 defineProps<{ tasks: Task[] }>()

@@ -15,7 +15,7 @@ const formData = ref({
   title: props.initialValues?.title || '',
   dueDate: props.initialValues?.dueDate || '',
   description: props.initialValues?.description || '',
-  priority: props.initialValues?.priority || 'medium',
+  priority: props.initialValues?.priority || 'MEDIUM',
 })
 
 const todayStr = new Date().toISOString().split('T')[0]

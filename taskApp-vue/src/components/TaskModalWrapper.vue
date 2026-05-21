@@ -7,9 +7,9 @@ const emit = defineEmits<{
 }>()
 
 const props = defineProps<{
-  title: string // e.g., "Create Task" or "Edit Task"
+  title: string
   initialValues?: { title: string; dueDate?: string; description: string; priority: string }
-  submitLabel: string // e.g., "Save" or "Create"
+  submitLabel: string
 }>()
 </script>
 

@@ -5,13 +5,14 @@ import Sidebar from '@/components/Sidebar.vue'
 import TaskList from '@/components/TaskList.vue'
 import TaskModalWrapper from '@/components/TaskModalWrapper.vue'
 import { useTasksStore } from '@/stores/tasks'
+import todayString from '@/utils/dateConverter'
 
 const tasksStore = useTasksStore()
 
 const myTaskStats = computed(() => ({
   all: tasksStore.totalTasksCount,
-  today: tasksStore.tasks.filter((t) => t.dueDate === 'Today').length,
-  scheduled: tasksStore.tasks.filter((t) => t.dueDate && t.dueDate !== 'Today').length,
+  today: tasksStore.tasks.filter((t) => t.dueDate === todayString).length,
+  scheduled: tasksStore.tasks.filter((t) => t.dueDate && t.dueDate !== todayString).length,
   completed: tasksStore.completedTasks.length,
 }))
 

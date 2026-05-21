@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import TaskModalWrapper from '@/components/TaskModalWrapper.vue'
+import { useTasksStore } from '@/stores/tasks'
 
 interface Task {
   id: string
@@ -8,10 +9,11 @@ interface Task {
   description: string
   dueDate?: string
   priority: string
-  isCompleted: boolean
+  status: string
 }
 
 const props = defineProps<{ task: Task }>()
+const taskStore = useTasksStore()
 
 const isEditOpen = ref(false)
 const taskToEdit = ref({
@@ -21,8 +23,44 @@ const taskToEdit = ref({
   priority: props.task.priority,
 })
 
-const handleUpdateSubmit = async () => {
-  console.log('updated task')
+interface TaskFormPayload {
+  title: string
+  description: string
+  priority: string
+  dueDate: string
+  status: string
+}
+
+const handleUpdateSubmit = async (updatedData: TaskFormPayload) => {
+  await taskStore.updateTask(
+    props.task.id,
+    updatedData.title,
+    updatedData.description,
+    updatedData.priority,
+    updatedData.dueDate,
+    props.task.status,
+  )
+  taskToEdit.value = { ...updatedData }
+  isEditOpen.value = false
+}
+const handleDeleteTask = async () => {
+  try {
+    await taskStore.deleteTask(props.task.id)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const handleCompleteTask = async () => {
+  const nextStatus = props.task.status === 'COMPLETED' ? 'OPEN' : 'COMPLETED'
+  await taskStore.updateTask(
+    props.task.id,
+    props.task.title,
+    props.task.description,
+    props.task.priority,
+    props.task.dueDate || '',
+    nextStatus,
+  )
 }
 </script>
 
@@ -34,7 +72,7 @@ const handleUpdateSubmit = async () => {
       <h3
         :class="[
           'font-semibold text-gray-800 text-lg',
-          task.isCompleted ? 'line-through text-green-600' : '',
+          task.status === 'COMPLETED' ? 'line-through text-green-600' : '',
         ]"
       >
         {{ task.title }}
@@ -45,20 +83,22 @@ const handleUpdateSubmit = async () => {
 
     <div class="flex justify-end mt-4 gap-2">
       <button
+        @click="handleCompleteTask"
         :class="[
           'text-xs px-3 py-1.5 rounded-lg border transition-colors',
-          task.isCompleted
+          task.status === 'COMPLETED'
             ? 'bg-green-100 text-green-700 border-green-200'
             : 'bg-white border-gray-400 hover:bg-gray-100',
         ]"
       >
-        {{ task.isCompleted ? 'Completed' : 'Mark Done' }}
+        {{ task.status === 'COMPLETED' ? 'Completed' : 'Mark Done' }}
       </button>
       <button
         @click="isEditOpen = true"
         class="text-xs px-2 py-1.5 rounded-lg border border-gray-400 transition-colors hover:bg-gray-100 pi pi-file-edit"
       ></button>
       <button
+        @click="handleDeleteTask"
         class="text-xs px-2 py-1.5 rounded-lg border transition-colors text-red-400 hover:bg-red-100 pi pi-trash"
       ></button>
     </div>
